@@ -1,20 +1,16 @@
 ﻿using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-using YMAPP.Services;
-using YMAPP.Views;
 
 namespace YMAPP
 {
     public partial class App : Application
     {
-
         public App()
         {
             InitializeComponent();
 
-            DependencyService.Register<MockDataStore>();
-            MainPage = new AppShell();
+            MainPage = new MainPage();
         }
 
         protected override void OnStart()

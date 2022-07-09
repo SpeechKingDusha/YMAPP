@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="YMAPP.MainPage"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Background="#336699">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="1*" />
+        </Grid.RowDefinitions>
+        <StackLayout Grid.Row="1">
+            <Label
+                FontAttributes="Bold"
+                FontSize="40"
+                HorizontalTextAlignment="Center"
+                Text="УМНЫЕ НОВОСТИ"
+                TextColor="White" />
+            <Label
+                Margin="0,-15,30,0"
+                FontAttributes="Italic,Bold"
+                FontSize="14"
+                HorizontalTextAlignment="End"
+                Text="by SpeechKingDusha"
+                TextColor="White" />
+            <ProgressBar Progress="0.5" />
+        </StackLayout>
+
+
+    </Grid>
+</ContentPage>
