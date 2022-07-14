@@ -1,6 +1,7 @@
 ﻿using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using YMAPP.Models;
 
 namespace YMAPP
 {
@@ -11,6 +12,7 @@ namespace YMAPP
             InitializeComponent();
 
             MainPage = new MainPage();
+            ItemNews.InitializeAsync();
         }
 
         protected override void OnStart()

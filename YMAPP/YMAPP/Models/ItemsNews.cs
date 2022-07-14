@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,9 +12,10 @@ namespace YMAPP.Models
 {
     public class ItemNews
     {
-        public const string URL = @"https://ym-penza.ru";
+        public const string URL = @"http://ym-penza.ru";
         const string FILENAMECACHE = "newscache.nc";
         const string FILENAMEHASH = "HashMainPage.hmp";
+        static readonly string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
         static private bool isReadFromFile;
         static private byte[] HashMainPage;
         static public byte CountNews { get; private set; }
@@ -73,7 +75,7 @@ namespace YMAPP.Models
         //Сохраняем полученный хеш новостной ленты в файл.
         static private void SaveHash()
         {
-            using (BinaryWriter writer = new BinaryWriter(File.Open(FILENAMEHASH, FileMode.OpenOrCreate)))
+            using (BinaryWriter writer = new BinaryWriter(File.Open(folderPath + FILENAMEHASH, FileMode.OpenOrCreate)))
             {
                 writer.Write(HashMainPage);
             }
@@ -82,11 +84,11 @@ namespace YMAPP.Models
         //Асинхронный метод. Сохраняет спарсенные новости в файл.
         static public async void SaveNewsCacheAsync(List<ItemNews> listNews)
         {
-            using (StreamWriter writer = new StreamWriter(FILENAMECACHE, false))
+            using (StreamWriter writer = new StreamWriter(folderPath + FILENAMECACHE, false))
             {
                 await writer.WriteLineAsync(CountNews.ToString());
             }
-            using (StreamWriter writer = new StreamWriter(FILENAMECACHE, true))
+            using (StreamWriter writer = new StreamWriter(folderPath + FILENAMECACHE, true))
             {
                 foreach (ItemNews itemNews in listNews)
                 {
@@ -183,7 +185,7 @@ namespace YMAPP.Models
         static public List<ItemNews> GetListNewsFromCeche()
         {
             List<ItemNews> listNews = new List<ItemNews>();
-            using (StreamReader reader = new StreamReader(FILENAMECACHE))
+            using (StreamReader reader = new StreamReader(folderPath + FILENAMECACHE))
             {
                 CountNews = Byte.Parse(reader.ReadLine());
                 byte count = CountNews;
@@ -207,25 +209,31 @@ namespace YMAPP.Models
         //Определяет через какой метод получить список материалов. Работает на уровне класса.
         static public void GetListNews(bool isReadFile)
         {
-            FileInfo fileInf = new FileInfo(FILENAMECACHE);
+            FileInfo fileInf = new FileInfo(folderPath + FILENAMECACHE);
             if (isReadFile && fileInf.Exists) ListAllNews = GetListNewsFromCeche();
             else ListAllNews = GetListNewsFromWeb();
         }
 
         //Инициализирует класс. Работает на уровне класса.
-        static public void Initialization()
+        static public async void InitializeAsync()
         {
-            CountNews = 0;
-            isReadFromFile = false;
-            HtmlWeb web = new HtmlWeb();
-            HtmlDoc = web.Load(URL);
-            HashMainPage = GetNewHashNL();
-            byte[] old = GetOldHashNL();
-            FileInfo fileInf = new FileInfo(FILENAMECACHE);
-            isReadFromFile = ComparatorHash(HashMainPage, old);
-            GetListNews(isReadFromFile);
-            if (!isReadFromFile || !fileInf.Exists) SaveNewsCacheAsync(ListAllNews);
-            SaveHash();
+            await Task.Run(() =>
+            {
+                CountNews = 0;
+                isReadFromFile = false;
+
+                HtmlWeb web = new HtmlWeb();
+                HtmlDoc = web.Load(URL);
+
+                HashMainPage = GetNewHashNL();
+                byte[] old = GetOldHashNL();
+                FileInfo fileInf = new FileInfo(folderPath + FILENAMECACHE);
+                isReadFromFile = ComparatorHash(HashMainPage, old);
+                GetListNews(isReadFromFile);
+                if (!isReadFromFile || !fileInf.Exists) SaveNewsCacheAsync(ListAllNews);
+                SaveHash();
+            }
+            );
         }
     }
 }
