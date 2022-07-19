@@ -2,40 +2,24 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
+using YMAPP.Models;
 
-namespace YMAPP.Models
+namespace YMAPP.Services
 {
-    public class ItemNews
+    public static class ParserNews
     {
-        public const string URL = @"http://ym-penza.ru";
+        const string URL = @"http://ym-penza.ru";
         const string FILENAMECACHE = "newscache.nc";
         const string FILENAMEHASH = "HashMainPage.hmp";
         static readonly string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+        static public bool isCompleeted { get; private set; }
         static private bool isReadFromFile;
         static private byte[] HashMainPage;
-        static public byte CountNews { get; private set; }
         static public List<ItemNews> ListAllNews { get; private set; }
         static public HtmlDocument HtmlDoc { get; private set; }
-        public UInt16 IdItemNews { get; set; }
-        public string Author { get; set; }
-        public string Name { get; set; }
-        public string Date { get; set; }
-        public string MinText { get; set; }
-        public string FullTextHtml { get; private set; }
-        public string LinkFullMaterial { get; set; }
-
-        //В конструкторе считается общее кол-во созданных экземпляров, а так же присваивается id экземпляру
-        public ItemNews()
-        {
-            CountNews++;
-            IdItemNews = CountNews;
-        }
-
+        //private ParserNews() { }
         // Получаем хеш новостей на главной странице
         static private byte[] GetNewHashNL()
         {
@@ -44,7 +28,6 @@ namespace YMAPP.Models
             byte[] tmpHash = new MD5CryptoServiceProvider().ComputeHash(tmpSource);
             return tmpHash;
         }
-
         //Получаем старый хеш новостной ленты
         static private byte[] GetOldHashNL()
         {
@@ -69,7 +52,7 @@ namespace YMAPP.Models
             {
                 if (newHash[i] != oldHash[i]) return false;
             }
-            return true;
+            return isReadFromFile = true;
         }
 
         //Сохраняем полученный хеш новостной ленты в файл.
@@ -86,7 +69,7 @@ namespace YMAPP.Models
         {
             using (StreamWriter writer = new StreamWriter(folderPath + FILENAMECACHE, false))
             {
-                await writer.WriteLineAsync(CountNews.ToString());
+                await writer.WriteLineAsync(ItemNews.CountNews.ToString());
             }
             using (StreamWriter writer = new StreamWriter(folderPath + FILENAMECACHE, true))
             {
@@ -98,38 +81,11 @@ namespace YMAPP.Models
                     await writer.WriteLineAsync(itemNews.Name);
                     await writer.WriteLineAsync(itemNews.MinText);
                     await writer.WriteLineAsync(itemNews.LinkFullMaterial);
+                    await writer.WriteLineAsync(itemNews.FullTextHtml);
                 }
             }
         }
 
-        //Парсит полный текст матераила в виде html для дальнейшей передачи в webview 
-        public void GetFullMaterial()
-        {
-            HtmlWeb web = new HtmlWeb();
-            var htmlDoc = web.Load(LinkFullMaterial);
-
-            var node = htmlDoc.DocumentNode.SelectSingleNode("//div[contains(@class,'itemFullText')]");
-            FullTextHtml = ResizeImage(node.InnerHtml);
-        }
-
-        //Находит в коде, полученный через GetFullMaterial() фиксированные размеры изображения
-        //и меняет их на 100% по ширине. Код размера по высоте удалеят из тега.
-        private string ResizeImage(string Code)
-        {
-            const string NEWSIZE = "100%";
-            int DELETECODEHEIGHT = 12 + NEWSIZE.Length;
-            for (int i = 0; i < Code.Length - 4; i++)
-            {
-                if (Code[i] == 'w' && Code[i + 1] == 'i' && Code[i + 2] == 'd' && Code[i + 3] == 't' && Code[i + 4] == 'h')
-                {
-                    i += 7;
-                    Code = Code.Insert(i, NEWSIZE);
-                    Code = Code.Remove(i + NEWSIZE.Length, DELETECODEHEIGHT);
-                }
-
-            }
-            return Code;
-        }
 
         //Удаляет из спарсенного текста символы табуляции, перехода на новую строку, и лишнии пробелы
         static string CleanText(string text)
@@ -155,6 +111,33 @@ namespace YMAPP.Models
             return text.ToString();
         }
 
+        //Находит в коде, полученный через GetFullMaterial() фиксированные размеры изображения
+        //и меняет их на 100% по ширине. Код размера по высоте удалеят из тега.
+        static private string ResizeImage(string Code)
+        {
+            const string NEWSIZE = "100%";
+            int DELETECODEHEIGHT = 12 + NEWSIZE.Length;
+            for (int i = 0; i < Code.Length - 4; i++)
+            {
+                if (Code[i] == 'w' && Code[i + 1] == 'i' && Code[i + 2] == 'd' && Code[i + 3] == 't' && Code[i + 4] == 'h')
+                {
+                    i += 7;
+                    Code = Code.Insert(i, NEWSIZE);
+                    Code = Code.Remove(i + NEWSIZE.Length, DELETECODEHEIGHT);
+                }
+            }
+            return Code;
+        }
+        //Парсит полный текст матераила в виде html для дальнейшей передачи в webview 
+        static public void GetFullMaterial(ref ItemNews _news)
+        {
+            HtmlWeb web = new HtmlWeb();
+            var htmlDoc = web.Load(_news.LinkFullMaterial);
+
+            var node = htmlDoc.DocumentNode.SelectSingleNode("//div[contains(@class,'itemFullText')]");
+            _news.FullTextHtml = ResizeImage(node.InnerHtml);
+        }
+
         //Создает список новостей из полученных материалов. Работает на уровне класса.
         static public List<ItemNews> GetListNewsFromWeb()
         {
@@ -175,7 +158,7 @@ namespace YMAPP.Models
                 Material.Author = CleanText(PieceNews.InnerText);
                 PieceNews = innerText.DocumentNode.SelectSingleNode("//h3[contains(@class, 'catItemTitle')]");
                 Material.LinkFullMaterial = GetLink(PieceNews.InnerHtml.ToString(), URL);
-                //Material.GetFullMaterial();
+                GetFullMaterial(ref Material);
                 listNews.Add(Material);
             }
             SaveHash();
@@ -187,21 +170,20 @@ namespace YMAPP.Models
             List<ItemNews> listNews = new List<ItemNews>();
             using (StreamReader reader = new StreamReader(folderPath + FILENAMECACHE))
             {
-                CountNews = Byte.Parse(reader.ReadLine());
-                byte count = CountNews;
-                for (byte i = 0; i < count; i++)
+                byte CountNews = Byte.Parse(reader.ReadLine());
+                for (byte i = 0; i < CountNews; i++)
                 {
                     ItemNews itemNews = new ItemNews();
-                    itemNews.IdItemNews = UInt16.Parse(reader.ReadLine());
+                    itemNews.IdItemNews = byte.Parse(reader.ReadLine());
                     itemNews.Author = reader.ReadLine();
                     itemNews.Date = reader.ReadLine();
                     itemNews.Name = reader.ReadLine();
                     itemNews.MinText = reader.ReadLine();
                     itemNews.LinkFullMaterial = reader.ReadLine();
+                    itemNews.FullTextHtml = reader.ReadLine();
 
                     listNews.Add(itemNews);
                 }
-                CountNews = count;
             }
             return listNews;
         }
@@ -213,13 +195,8 @@ namespace YMAPP.Models
             if (isReadFile && fileInf.Exists) ListAllNews = GetListNewsFromCeche();
             else ListAllNews = GetListNewsFromWeb();
         }
-
-        //Инициализирует класс. Работает на уровне класса.
-        static public async void InitializeAsync()
+        static public void Initialize()
         {
-            await Task.Run(() =>
-            {
-                CountNews = 0;
                 isReadFromFile = false;
 
                 HtmlWeb web = new HtmlWeb();
@@ -227,13 +204,14 @@ namespace YMAPP.Models
 
                 HashMainPage = GetNewHashNL();
                 byte[] old = GetOldHashNL();
+
                 FileInfo fileInf = new FileInfo(folderPath + FILENAMECACHE);
-                isReadFromFile = ComparatorHash(HashMainPage, old);
+                ComparatorHash(HashMainPage, old);
+
                 GetListNews(isReadFromFile);
                 if (!isReadFromFile || !fileInf.Exists) SaveNewsCacheAsync(ListAllNews);
                 SaveHash();
-            }
-            );
+                isCompleeted = true;
         }
     }
 }

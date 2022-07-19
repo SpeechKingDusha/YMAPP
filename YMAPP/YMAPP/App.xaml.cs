@@ -10,9 +10,7 @@ namespace YMAPP
         public App()
         {
             InitializeComponent();
-
             MainPage = new MainPage();
-            ItemNews.InitializeAsync();
         }
 
         protected override void OnStart()

@@ -3,7 +3,13 @@
     x:Class="YMAPP.MainPage"
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:YMAPP.ViewModels"
+    x:DataType="local:MainPageViewModel"
     Background="#336699">
+    <ContentPage.BindingContext>
+        <local:MainPageViewModel />
+    </ContentPage.BindingContext>
+
 
     <Grid>
         <Grid.RowDefinitions>
@@ -25,7 +31,9 @@
                 HorizontalTextAlignment="End"
                 Text="by SpeechKingDusha"
                 TextColor="White" />
-            <ProgressBar Progress="0.5" />
+            <ProgressBar Progress="{Binding Progress, Mode=OneWay}" />
+            <ActivityIndicator   IsRunning="True" VerticalOptions="CenterAndExpand" />
+
         </StackLayout>
 
 
