@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Xamarin.Forms;
-using YMAPP.Models;
 
-namespace YMAPP
+using Xamarin.Forms;
+using Xamarin.Forms.Xaml;
+
+namespace YMAPP.Views
 {
-    public partial class MainPage
+    [XamlCompilation(XamlCompilationOptions.Compile)]
+    public partial class ListNews : ContentView
     {
-        public MainPage()
+        public ListNews()
         {
             InitializeComponent();
         }
