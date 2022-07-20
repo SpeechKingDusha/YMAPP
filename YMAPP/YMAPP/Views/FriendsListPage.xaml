@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="YMAPP.Views.FriendsListPage"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+    <ContentPage.Content>
+        <StackLayout>
+            <ListView
+                x:Name="booksList"
+                HasUnevenRows="True"
+                ItemsSource="{Binding Friends}"
+                SelectedItem="{Binding SelectedFriend, Mode=TwoWay}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <ViewCell.View>
+                                <StackLayout Padding="10,10,10,10" BackgroundColor="AliceBlue">
+                                    <Label
+                                        Padding="15,10,15,10"
+                                        BackgroundColor="#336699"
+                                        FontAttributes="Bold"
+                                        FontSize="Large"
+                                        HorizontalTextAlignment="Center"
+                                        Text="{Binding Name}"
+                                        TextColor="White"
+                                        TextTransform="Uppercase" />
+                                    <Label
+                                        FontAttributes="Italic,Bold"
+                                        FontSize="Subtitle"
+                                        HorizontalTextAlignment="End"
+                                        Text="{Binding Email}"
+                                        TextColor="#336699"
+                                        TextDecorations="Underline" />
+                                    <Label
+                                        FontSize="Body"
+                                        LineBreakMode="WordWrap"
+                                        Text="{Binding Phone}" />
+                                </StackLayout>
+                            </ViewCell.View>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

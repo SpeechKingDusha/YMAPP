@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="YMAPP.Views.FriendPage"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+    <ContentPage.Content>
+        <StackLayout>
+            <StackLayout x:Name="friendStack" Margin="10,10,10,10">
+                <Label FontSize="Title" Text="{Binding Name}" />
+                <Label FontSize="Small" Text="{Binding Email}" />
+                <Label FontSize="Body" Text="{Binding Phone}" />
+            </StackLayout>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

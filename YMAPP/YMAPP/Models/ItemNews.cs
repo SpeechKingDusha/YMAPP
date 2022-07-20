@@ -2,7 +2,7 @@
 
 namespace YMAPP.Models
 {
-    public class ItemNews: INotifyPropertyChanged
+    public class ItemNews
     {
         static public byte CountNews { get; private set; }
         public byte IdItemNews { get; set; }
@@ -19,7 +19,5 @@ namespace YMAPP.Models
             CountNews++;
             IdItemNews = CountNews;
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

@@ -2,15 +2,19 @@
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using YMAPP.Models;
+using YMAPP.Services;
+using YMAPP.Views;
 
 namespace YMAPP
 {
     public partial class App : Application
     {
         public App()
+
         {
+            //ParserNews.Initialize();
             InitializeComponent();
-            MainPage = new MainPage();
+            MainPage = new NavigationPage(new FriendsListPage());
         }
 
         protected override void OnStart()

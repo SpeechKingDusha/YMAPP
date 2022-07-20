@@ -19,7 +19,7 @@ namespace YMAPP.Services
         static private byte[] HashMainPage;
         static public List<ItemNews> ListAllNews { get; private set; }
         static public HtmlDocument HtmlDoc { get; private set; }
-        //private ParserNews() { }
+
         // Получаем хеш новостей на главной странице
         static private byte[] GetNewHashNL()
         {
