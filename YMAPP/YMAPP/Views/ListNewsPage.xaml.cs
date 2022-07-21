@@ -10,12 +10,12 @@ using YMAPP.ViewModels;
 
 namespace YMAPP.Views
 {
-    public partial class FriendsListPage : ContentPage
+    public partial class ListNewsPage : ContentPage
     {
-        public FriendsListPage()
+        public ListNewsPage()
         {
             InitializeComponent();
-            BindingContext = new FriendsListViewModel() { Navigation = this.Navigation };
+            BindingContext = new ListNewsViewModel() { Navigation = this.Navigation };
         }
     }
 }

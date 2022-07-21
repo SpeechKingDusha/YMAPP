@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
-    x:Class="YMAPP.Views.FriendPage"
+    x:Class="YMAPP.Views.ItemNewsPage"
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
     <ContentPage.Content>
         <StackLayout>
-            <StackLayout x:Name="friendStack" Margin="10,10,10,10">
+            <StackLayout x:Name="itemNewsStack" Margin="10,10,10,10">
                 <Label FontSize="Title" Text="{Binding Name}" />
-                <Label FontSize="Small" Text="{Binding Email}" />
-                <Label FontSize="Body" Text="{Binding Phone}" />
+                <Label FontSize="Small" Text="{Binding Author}" />
+                <Label FontSize="Body" Text="{Binding MinText}" />
             </StackLayout>
         </StackLayout>
     </ContentPage.Content>

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
-    x:Class="YMAPP.Views.FriendsListPage"
+    x:Class="YMAPP.Views.ListNewsPage"
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
     <ContentPage.Content>
@@ -8,8 +8,8 @@
             <ListView
                 x:Name="booksList"
                 HasUnevenRows="True"
-                ItemsSource="{Binding Friends}"
-                SelectedItem="{Binding SelectedFriend, Mode=TwoWay}">
+                ItemsSource="{Binding ListNews}"
+                SelectedItem="{Binding SelectedNews, Mode=TwoWay}">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
@@ -24,17 +24,38 @@
                                         Text="{Binding Name}"
                                         TextColor="White"
                                         TextTransform="Uppercase" />
+                                    <StackLayout Orientation="Horizontal" />
+                                    <Label
+                                        FontAttributes="Italic,Bold"
+                                        FontSize="Subtitle"
+                                        HorizontalTextAlignment="Start"
+                                        Text="{Binding Date}"
+                                        TextColor="#336699"
+                                        TextDecorations="Underline" />
                                     <Label
                                         FontAttributes="Italic,Bold"
                                         FontSize="Subtitle"
                                         HorizontalTextAlignment="End"
-                                        Text="{Binding Email}"
+                                        Text="{Binding Author}"
                                         TextColor="#336699"
                                         TextDecorations="Underline" />
+
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="50" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                    </Grid>
+                                    <Image
+                                        HorizontalOptions="Center"
+                                        Source="{Binding Image}"
+                                        VerticalOptions="Start"
+                                        WidthRequest="100" />
                                     <Label
                                         FontSize="Body"
                                         LineBreakMode="WordWrap"
-                                        Text="{Binding Phone}" />
+                                        Text="{Binding MinText}" />
+
                                 </StackLayout>
                             </ViewCell.View>
                         </ViewCell>

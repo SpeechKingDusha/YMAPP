@@ -82,6 +82,7 @@ namespace YMAPP.Services
                     await writer.WriteLineAsync(itemNews.MinText);
                     await writer.WriteLineAsync(itemNews.LinkFullMaterial);
                     await writer.WriteLineAsync(itemNews.FullTextHtml);
+                    await writer.WriteLineAsync(itemNews.Image);
                 }
             }
         }
@@ -136,6 +137,32 @@ namespace YMAPP.Services
 
             var node = htmlDoc.DocumentNode.SelectSingleNode("//div[contains(@class,'itemFullText')]");
             _news.FullTextHtml = ResizeImage(node.InnerHtml);
+            GetImage(node, ref _news);
+        }
+        // Получает одно изображение из материала, если изображение отсутствует записывает название
+        // дефолтного изображения из ресурсов
+        static private void GetImage(HtmlNode node, ref ItemNews _news)
+        {
+            StringBuilder Text = new StringBuilder(URL, 50);
+            var imageNode = node.SelectSingleNode("//div[contains(@class,'itemFullText')]/p/img");
+            if (imageNode != null)
+            {
+                _news.Image = imageNode.OuterHtml;
+                byte step = 0;
+                for (byte i = 0; i < _news.Image.Length; i++)
+                {
+                    if (step == 3) Text.Append(_news.Image[i]);
+                    if (step == 4) break;
+                    if (_news.Image[i] == '\"') ++step; ;
+                }
+                Text = Text.Replace("\"", "");
+                _news.Image = Text.ToString();
+            }
+            else
+            {
+                _news.Image = "defaultPicSmall.png";
+            }
+
         }
 
         //Создает список новостей из полученных материалов. Работает на уровне класса.
@@ -181,6 +208,7 @@ namespace YMAPP.Services
                     itemNews.MinText = reader.ReadLine();
                     itemNews.LinkFullMaterial = reader.ReadLine();
                     itemNews.FullTextHtml = reader.ReadLine();
+                    itemNews.Image = reader.ReadLine();
 
                     listNews.Add(itemNews);
                 }
