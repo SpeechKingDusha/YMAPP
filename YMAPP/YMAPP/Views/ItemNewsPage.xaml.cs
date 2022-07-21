@@ -10,10 +10,10 @@ using YMAPP.ViewModels;
 
 namespace YMAPP.Views
 {
-    public partial class FriendPage : ContentPage
+    public partial class ItemNewsPage : ContentPage
     {
-        public FriendViewModel ViewModel { get; private set; }
-        public FriendPage(FriendViewModel vm)
+        public ItemNewsViewModel ViewModel { get; private set; }
+        public ItemNewsPage (ItemNewsViewModel vm)
         {
             InitializeComponent();
             ViewModel = vm;

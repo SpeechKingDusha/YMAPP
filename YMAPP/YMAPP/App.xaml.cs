@@ -14,7 +14,7 @@ namespace YMAPP
         {
             //ParserNews.Initialize();
             InitializeComponent();
-            MainPage = new NavigationPage(new FriendsListPage());
+            MainPage = new NavigationPage(new ListNewsPage());
         }
 
         protected override void OnStart()

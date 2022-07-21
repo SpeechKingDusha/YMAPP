@@ -12,6 +12,7 @@ namespace YMAPP.Models
         public string MinText { get; set; }
         public string FullTextHtml { get; set; }
         public string LinkFullMaterial { get; set; }
+        public string Image { get; set; }
 
         //В конструкторе считается общее кол-во созданных экземпляров, а так же присваивается id экземпляру
         public ItemNews()
