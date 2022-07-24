@@ -92,6 +92,19 @@ namespace YMAPP.ViewModels
             }
         }
 
+        public string FullTextHtml
+        {
+            get { return ItemNews.FullTextHtml; }
+            set
+            {
+                if (ItemNews.FullTextHtml != value)
+                {
+                    ItemNews.FullTextHtml = value;
+                    OnPropertyChanged("FullTextHtml");
+                }
+            }
+        }
+
         public bool IsValid
         {
             get
