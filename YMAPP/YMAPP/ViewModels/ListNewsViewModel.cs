@@ -27,7 +27,7 @@ namespace YMAPP.ViewModels
         {
             ParserNews.Initialize();
             ListNews = new ObservableCollection<ItemNewsViewModel>();
-
+            
             foreach (var item in ParserNews.ListAllNews)
             {
                 ItemNewsViewModel itemNews = new ItemNewsViewModel();
@@ -36,6 +36,8 @@ namespace YMAPP.ViewModels
                 itemNews.Author = item.Author;
                 itemNews.MinText = item.MinText;
                 itemNews.Image = item.Image;
+                itemNews.FullTextHtml = item.FullTextHtml;
+
                 ListNews.Add(itemNews);
             }
 

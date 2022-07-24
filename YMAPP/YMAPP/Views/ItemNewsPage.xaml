@@ -4,12 +4,13 @@
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
     <ContentPage.Content>
+
         <StackLayout>
-            <StackLayout x:Name="itemNewsStack" Margin="10,10,10,10">
-                <Label FontSize="Title" Text="{Binding Name}" />
-                <Label FontSize="Small" Text="{Binding Author}" />
-                <Label FontSize="Body" Text="{Binding MinText}" />
-            </StackLayout>
+            <WebView x:Name="webView" VerticalOptions="FillAndExpand">
+                <WebView.Source>
+                    <HtmlWebViewSource Html="{Binding FullTextHtml}" />
+                </WebView.Source>
+            </WebView>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

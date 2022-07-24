@@ -11,6 +11,8 @@ namespace YMAPP.Services
     public static class ParserNews
     {
         const string URL = @"http://ym-penza.ru";
+        //if (Android.OS.Build.VERSION.SdkInt >= Android.OS.BuildVersionCodes.Lollipop) { builder.SetCategory(Notification.CategoryEmail); } проверить версию
+
         const string FILENAMECACHE = "newscache.nc";
         const string FILENAMEHASH = "HashMainPage.hmp";
         static readonly string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
@@ -23,6 +25,7 @@ namespace YMAPP.Services
         // Получаем хеш новостей на главной странице
         static private byte[] GetNewHashNL()
         {
+            
             var newsListNodes = HtmlDoc.DocumentNode.SelectSingleNode("//div[contains(@class,'itemListView')]");
             byte[] tmpSource = ASCIIEncoding.ASCII.GetBytes(newsListNodes.InnerHtml.ToString());
             byte[] tmpHash = new MD5CryptoServiceProvider().ComputeHash(tmpSource);
@@ -91,6 +94,7 @@ namespace YMAPP.Services
         //Удаляет из спарсенного текста символы табуляции, перехода на новую строку, и лишнии пробелы
         static string CleanText(string text)
         {
+            //myString = Regex.Replace(myString, @"\s+", " ");
             text = text.Replace("\t", "");
             text = text.Replace("\n", "");
             text = text.Replace("  ", "");
@@ -117,6 +121,7 @@ namespace YMAPP.Services
         static private string ResizeImage(string Code)
         {
             const string NEWSIZE = "100%";
+            // Code.IndexOf() Todo: ???
             int DELETECODEHEIGHT = 12 + NEWSIZE.Length;
             for (int i = 0; i < Code.Length - 4; i++)
             {
@@ -129,6 +134,21 @@ namespace YMAPP.Services
             }
             return Code;
         }
+        //Находит адресс ресурса изображения и дописывает в него URL до полного адреса
+        static private string MakeFullAdressImage(string Code)
+        {
+            for (int i = 0; i < Code.Length - 4; i++)
+            {
+                if (Code[i] == 's' && Code[i + 1] == 'r' && Code[i + 2] == 'c' && Code[i + 3] == '=' && Code[i + 4] == '\"')
+                {
+                    i += 5;
+                    Code = Code.Insert(i, "https://ym-penza.ru");
+                    i += URL.Length;
+                }
+
+            }
+            return Code;
+        }
         //Парсит полный текст матераила в виде html для дальнейшей передачи в webview 
         static public void GetFullMaterial(ref ItemNews _news)
         {
@@ -137,13 +157,15 @@ namespace YMAPP.Services
 
             var node = htmlDoc.DocumentNode.SelectSingleNode("//div[contains(@class,'itemFullText')]");
             _news.FullTextHtml = ResizeImage(node.InnerHtml);
+            _news.FullTextHtml = MakeFullAdressImage (_news.FullTextHtml);
+
             GetImage(node, ref _news);
         }
         // Получает одно изображение из материала, если изображение отсутствует записывает название
         // дефолтного изображения из ресурсов
         static private void GetImage(HtmlNode node, ref ItemNews _news)
         {
-            StringBuilder Text = new StringBuilder(URL, 50);
+            StringBuilder Text = new StringBuilder("https://ym-penza.ru", 50);
             var imageNode = node.SelectSingleNode("//div[contains(@class,'itemFullText')]/p/img");
             if (imageNode != null)
             {
