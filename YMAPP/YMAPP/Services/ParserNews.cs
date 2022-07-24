@@ -155,7 +155,7 @@ namespace YMAPP.Services
             HtmlWeb web = new HtmlWeb();
             var htmlDoc = web.Load(_news.LinkFullMaterial);
 
-            var node = htmlDoc.DocumentNode.SelectSingleNode("//div[contains(@class,'itemFullText')]");
+            var node = htmlDoc.DocumentNode.SelectSingleNode("//div[contains(@class,'itemBody')]");
             _news.FullTextHtml = ResizeImage(node.InnerHtml);
             _news.FullTextHtml = MakeFullAdressImage (_news.FullTextHtml);
 
